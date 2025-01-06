@@ -1,21 +1,45 @@
-export const fetchPromptsByCategory = async (category: string) => {
-    const mockData = {
-      HistoricalFigures: [
-        { prompt: "Albert Einstein giving a lecture", image: "einstein.jpg" },
-        { prompt: "Napoleon Bonaparte at a battlefield", image: "napoleon.jpg" },
-      ],
-      Science: [
-        { prompt: "A futuristic robot in a lab", image: "robot.jpg" },
-        { prompt: "A DNA double helix in space", image: "dna.jpg" },
-      ],
-      Memes: [
-        { prompt: "A cat wearing a top hat", image: "cat_hat.jpg" },
-        { prompt: "A dog driving a car", image: "dog_car.jpg" },
-      ],
-    };
-  
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(mockData[category]), 500); // Simulate network delay
-    });
+import axios from "axios";
+
+export const generateImageSubnet = async (
+  prompt: string,
+  imageRatio: "horizontal" | "square" | "vertical",
+  modelId: string = "SG161222/RealVisXL_V4.0_Lightning",
+  negativePrompt?: string
+): Promise<string> => {
+  const ratio = {
+    horizontal: { width: 1024, height: 576 },
+    square: { width: 1024, height: 1024 },
+    vertical: { width: 576, height: 1024 },
+  }[imageRatio];
+
+  const options = {
+    method: "POST",
+    url: "https://dream-gateway.livepeer.cloud/text-to-image",
+    headers: {
+      Authorization: `Bearer ${process.env.SUBNET_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    data: {
+      model_id: modelId,
+      prompt,
+      height: ratio.height,
+      width: ratio.width,
+      guidance_scale: 2,
+      negative_prompt: negativePrompt || "",
+      safety_check: true,
+      seed: undefined,
+      num_inference_steps: 6,
+      num_images_per_prompt: 1,
+    },
   };
-  
+
+  try {
+    const response = await axios(options);
+    const imageUrl = response.data.images[0].url;
+    console.log("Generated Image URL:", imageUrl);
+    return imageUrl;
+  } catch (error) {
+    console.error("Error generating image with Subnet:", error);
+    throw new Error("Failed to generate image.");
+  }
+};

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { categories } from '../game/prompts';
 import { calculateAccuracy } from '../utils/scoring';
 import { addToLeaderboard } from '../utils/leaderboard';
+import { generateImageSubnet } from '../utils/api';
 
 export default function Game() {
   const [playerName, setPlayerName] = useState<string>('Player Name');
@@ -36,7 +37,7 @@ export default function Game() {
     loadNewPrompt(selectedCategory);
   };
 
-  const loadNewPrompt = (selectedCategory: string) => {
+  const loadNewPrompt = async (selectedCategory: string) => {
     const prompts = categories[selectedCategory];
     const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
     setCurrentPrompt(randomPrompt.prompt);
@@ -47,11 +48,19 @@ export default function Game() {
     setUserInput('');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (currentPrompt && !isTimeUp) {
       const accuracy = calculateAccuracy(currentPrompt, userInput);
       setScore(accuracy);
       setTotalScore((prev) => prev + accuracy);
+
+      // Call the Subnet API to generate a new image based on user input
+      try {
+        const newImageUrl = await generateImageSubnet(userInput, 'horizontal');
+        setImage(newImageUrl);
+      } catch (error) {
+        console.error('Error generating image:', error);
+      }
     }
   };
 
@@ -104,7 +113,7 @@ export default function Game() {
           <h1>{category}</h1>
           <p>Round {round} of {totalRounds}</p>
           <p>Total Score: {totalScore}</p>
-          {image && <img src={`/assets/images/${image}`} alt={currentPrompt ?? 'Prompt Destroyers image'} />}
+          {image && <img src={image} alt={currentPrompt ?? 'Prompt Destroyers image'} />}
           <p>Time remaining: {timer} seconds</p>
           <p>Write the prompt for the image shown above:</p>
           <input
