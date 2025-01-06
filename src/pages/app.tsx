@@ -4,8 +4,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { WagmiConfig, createConfig } from 'wagmi';
 import { ConnectKitProvider } from 'connectkit';
 import { mainnet } from 'wagmi/chains';
-
-// Pages
 import Home from '../pages/Home';
 import Game from '../pages/Game';
 import CharacterSelect from '../pages/CharacterSelect';
