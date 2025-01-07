@@ -3,19 +3,26 @@
 import { useState, useRef } from "react";
 import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
+import { fal } from "@fal-ai/client";
 
 export default function ProfilePage() {
   const { address, isConnected } = useAccount();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  fal.config({
+    proxyUrl: "/api/profile/upload",
+  });
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
+        setPreviewImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -26,35 +33,41 @@ export default function ProfilePage() {
 
     setIsUploading(true);
     try {
-      const response = await fetch("/api/profile/upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      // Upload the selected image to get a URL
+      const uploadedImageUrl = await fal.storage.upload(selectedImage);
+
+      console.log("Uploaded Image URL:", uploadedImageUrl);
+
+      // Generate an image using the uploaded image as reference
+      const prompt =
+        "An award-winning portrait vintage, of a child royalty 17th century. striking pose, blue, pink outfit";
+      const result = await fal.subscribe("fal-ai/flux-pulid", {
+        input: {
+          prompt,
+          reference_image_url: uploadedImageUrl, // Use the uploaded image URL here
         },
-        body: JSON.stringify({
-          address,
-          imageData: selectedImage,
-        }),
+        logs: true,
+        onQueueUpdate: (update) => {
+          if (update.status === "IN_PROGRESS") {
+            update.logs.map((log) => log.message).forEach(console.log);
+          }
+        },
       });
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
+      console.log("Generated Image Data:", result.data);
+      console.log("Request ID:", result.requestId);
 
-      const result = await response.json();
-
-      if (result.success) {
-        alert("Profile picture uploaded successfully!");
-        console.log("Fal.ai response:", result.data);
+      if (result.data) {
+        alert("Profile picture uploaded and image generated successfully!");
       } else {
-        throw new Error(result.message);
+        throw new Error("Failed to generate image");
       }
     } catch (error) {
       console.error("Upload error:", error);
       alert(
         error instanceof Error
           ? error.message
-          : "Failed to upload profile picture"
+          : "Failed to upload or generate image"
       );
     } finally {
       setIsUploading(false);
@@ -82,10 +95,10 @@ export default function ProfilePage() {
         </div>
 
         <div className="mb-6">
-          {selectedImage && (
+          {previewImage && (
             <div className="mb-4">
               <img
-                src={selectedImage}
+                src={previewImage}
                 alt="Selected profile picture"
                 className="mx-auto h-32 w-32 rounded-full object-cover"
               />
