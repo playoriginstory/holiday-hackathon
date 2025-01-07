@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { categories } from '../game/prompts';
-import { calculateAccuracy } from '../utils/scoring';
+import { calculateSemanticAccuracy } from '../utils/scoring'; // Import the new semantic scoring function
 import { addToLeaderboard } from '../utils/leaderboard';
 import { generateImageSubnet } from '../utils/api';
 
@@ -56,7 +56,8 @@ export default function Game() {
 
   const handleSubmit = async () => {
     if (currentPrompt && !isTimeUp) {
-      const accuracy = calculateAccuracy(currentPrompt, userInput);
+      // Use the new semantic scoring function
+      const accuracy = await calculateSemanticAccuracy(currentPrompt, userInput);
       setScore(accuracy);
       setTotalScore((prev) => prev + accuracy);
 
