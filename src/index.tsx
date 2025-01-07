@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import 'react-refresh/runtime.js';
 import App from './pages/app';
 
 // React 18+ uses `createRoot` for rendering

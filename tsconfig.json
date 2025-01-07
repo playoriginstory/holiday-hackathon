@@ -6,22 +6,24 @@
     "strict": true,                 // Enables strict type-checking options
     "module": "commonjs",           // Use CommonJS module system
     "target": "ES6",                // Target ES6+ for better compatibility
+    "outDir": "./build",            // Specify the output directory
+    "rootDir": "./src",             // Specify the root directory of your input files
 
     /* Modules */
-    "moduleResolution": "node",                         // Use Node.js module resolution strategy
-    "resolveJsonModule": true,                          // Enable importing JSON files as modules
-    "isolatedModules": true,                            // Ensure each file can be safely transpiled
+    "moduleResolution": "node",    // Use Node.js module resolution strategy
+    "resolveJsonModule": true,     // Enable importing JSON files as modules
+    "isolatedModules": true,       // Ensure each file can be safely transpiled
 
     /* JavaScript Support */
-    "allowJs": true,                                    // Allow JavaScript files in the project
-    "checkJs": false,                                   // Disable type checking for JavaScript files
+    "allowJs": true,               // Allow JavaScript files in the project
+    "checkJs": false,              // Disable type checking for JavaScript files
 
     /* Paths and Root */
-    "baseUrl": "./",                                    // Base URL for resolving non-relative module imports
-    "paths": {                                          // Resolve imports with aliasing (if needed)
+    "baseUrl": "./",               // Base URL for resolving non-relative module imports
+    "paths": {                     // Resolve imports with aliasing (if needed)
       "*": ["node_modules/*"]
     }
   },
-  "include": ["src"],                                    // Include files in the `src` directory
-  "exclude": ["node_modules", "build"]                  // Exclude unnecessary directories
+  "include": ["src"],              // Include files in the `src` directory
+  "exclude": ["node_modules", "build"] // Exclude unnecessary directories
 }
