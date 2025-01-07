@@ -1,32 +1,50 @@
 {
-    "name": "prompt-destroyers",
-    "version": "1.0.0",
-    "private": true,
-    "dependencies": {
-        "@types/node": "^16.18.0",
-        "@types/react": "^18.2.0",
-        "@types/react-dom": "^18.2.0",
-        "axios": "^1.7.9",
-        "connectkit": "^1.5.0",
-        "ethers": "^5.7.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-router-dom": "^6.18.0",
-        "tailwindcss": "^3.3.0",
-        "typescript": "^5.0.0",
-        "viem": "^1.18.0",
-        "wagmi": "^1.4.0"
-    },
-    "scripts": {
-        "dev": "vite",
-        "build": "tsc && vite build",
-        "preview": "vite preview"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-react": "^4.0.0",
-        "autoprefixer": "^10.4.0",
-        "postcss": "^8.4.0",
-        "vite": "^4.5.0",
-        "vite-plugin-pwa": "^0.16.0"
-    }
+  "name": "prompt-destroyers",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@tanstack/query-core": "^5.62.16",
+    "@tanstack/react-query": "^5.62.16",
+    "@types/node": "^16.18.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "ajv": "^6.12.6",
+    "ajv-keywords": "^3.5.2",
+    "axios": "^1.7.9",
+    "connectkit": "^1.8.2",
+    "ethers": "^5.7.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.1",
+    "react-scripts": "^5.0.1",
+    "tailwindcss": "^3.3.0",
+    "viem": "^2.22.3",
+    "wagmi": "^2.14.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "typescript": "^5.7.2",
+    "vite": "^4.5.0",
+    "vite-plugin-pwa": "^0.16.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

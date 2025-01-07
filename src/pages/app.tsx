@@ -1,19 +1,28 @@
-// File: src/app.tsx
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { WagmiConfig, createConfig } from 'wagmi';
-import { ConnectKitProvider } from 'connectkit';
+import { WagmiConfig, createConfig, configureChains } from 'wagmi';
+import { ConnectKitProvider, getDefaultClient } from 'connectkit';
 import { mainnet } from 'wagmi/chains';
-import Home from '../pages/Home';
-import Game from '../pages/Game';
-import CharacterSelect from '../pages/CharacterSelect';
-import Leaderboard from '../pages/Leaderboard';
+import Home from './Home';
+import Game from './Game';
+import CharacterSelect from './CharacterSelect';
+import Leaderboard from './Leaderboard';
 
-const wagmiConfig = createConfig({
-  chains: [mainnet],
-  // Add your wallet connectors configuration here
-});
+// Configure Wagmi with chains and connectors
+const { provider, webSocketProvider } = configureChains([mainnet], [
+  // Add any providers you want to use, e.g., alchemyProvider, publicProvider
+]);
 
+const wagmiConfig = createConfig(
+  getDefaultClient({
+    appName: 'Prompt Destroyers',
+    chains: [mainnet],
+    provider,
+    webSocketProvider,
+  })
+);
+
+// Define routes for the application
 const router = createBrowserRouter([
   {
     path: '/',
@@ -33,7 +42,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <WagmiConfig config={wagmiConfig}>
       <ConnectKitProvider>

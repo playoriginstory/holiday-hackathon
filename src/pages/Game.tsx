@@ -4,9 +4,11 @@ import { calculateAccuracy } from '../utils/scoring';
 import { addToLeaderboard } from '../utils/leaderboard';
 import { generateImageSubnet } from '../utils/api';
 
+type CategoryKey = keyof typeof categories;
+
 export default function Game() {
   const [playerName, setPlayerName] = useState<string>('Player Name');
-  const [category, setCategory] = useState<string | null>(null);
+  const [category, setCategory] = useState<CategoryKey | null>(null);
   const [currentPrompt, setCurrentPrompt] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [userInput, setUserInput] = useState<string>('');
@@ -31,13 +33,17 @@ export default function Game() {
   }, [timer, currentPrompt]);
 
   const handleCategorySelect = (selectedCategory: string) => {
-    setCategory(selectedCategory);
-    setRound(1);
-    setTotalScore(0);
-    loadNewPrompt(selectedCategory);
+    if (selectedCategory in categories) {
+      setCategory(selectedCategory as CategoryKey);
+      setRound(1);
+      setTotalScore(0);
+      loadNewPrompt(selectedCategory as CategoryKey);
+    } else {
+      console.error('Invalid category selected:', selectedCategory);
+    }
   };
 
-  const loadNewPrompt = async (selectedCategory: string) => {
+  const loadNewPrompt = async (selectedCategory: CategoryKey) => {
     const prompts = categories[selectedCategory];
     const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
     setCurrentPrompt(randomPrompt.prompt);
@@ -111,7 +117,9 @@ export default function Game() {
       ) : (
         <div>
           <h1>{category}</h1>
-          <p>Round {round} of {totalRounds}</p>
+          <p>
+            Round {round} of {totalRounds}
+          </p>
           <p>Total Score: {totalScore}</p>
           {image && <img src={image} alt={currentPrompt ?? 'Prompt Destroyers image'} />}
           <p>Time remaining: {timer} seconds</p>
@@ -123,7 +131,9 @@ export default function Game() {
             onChange={(e) => setUserInput(e.target.value)}
             disabled={isTimeUp}
           />
-          <button onClick={handleSubmit} disabled={isTimeUp}>Submit</button>
+          <button onClick={handleSubmit} disabled={isTimeUp}>
+            Submit
+          </button>
           {score !== null && (
             <div>
               <p>Your accuracy score: {score}%</p>
