@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS = "0xa93e40b59320911c5BD499C4c16Bc7E201D94744";
+const CONTRACT_ADDRESS = "0xCe3ec4934E5bf5daD3dDBdCDe86Ae7FB5E33B6E5";
 
 const ImageNFTABI = [
   {
@@ -114,6 +114,28 @@ const ImageNFTABI = [
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -161,6 +183,25 @@ const ImageNFTABI = [
       }
     ],
     "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -245,6 +286,19 @@ const ImageNFTABI = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getCurrentTokenId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -270,11 +324,6 @@ const ImageNFTABI = [
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
       {
         "internalType": "string",
         "name": "imageUrl",
@@ -329,6 +378,13 @@ const ImageNFTABI = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -492,6 +548,19 @@ const ImageNFTABI = [
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]
 
@@ -522,16 +591,18 @@ const getContract = async (needSigner = false): Promise<ethers.Contract> => {
   return new ethers.Contract(CONTRACT_ADDRESS, ImageNFTABI, providerOrSigner);
 };
 
-export const mintNFT = async (tokenId: string, imageUrl: string): Promise<{ success: boolean; message: string }> => {
+export const mintNFT = async (imageUrl: string): Promise<{ success: boolean; message: string }> => {
   try {
     const contract = await getContract(true); 
-    const tx = await contract.mintNFT(tokenId, imageUrl);
+    const currentTokenId = await contract.getCurrentTokenId();
+        console.log(`Next Token ID: ${currentTokenId}`);
+    const tx = await contract.mintNFT(imageUrl);
     console.log("Transaction sent. Waiting for confirmation...");
     await tx.wait();
     console.log("Transaction confirmed. NFT minted!");
     return {
       success: true,
-      message: `NFT minted successfully! Token ID: ${tokenId}`,
+      message: `NFT minted successfully! Token ID: ${currentTokenId}`,
     };
   } catch (error: any) {
     console.error("Error minting NFT:", error);

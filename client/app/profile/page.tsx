@@ -6,7 +6,7 @@ import { ConnectKitButton } from "connectkit";
 import { fal } from "@fal-ai/client";
 import { createUserAvatar } from "@/lib/dynamodb";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, mintNFT } from "@/lib/utils";
 
 const PROMPT_OPTIONS = [
   {
@@ -76,6 +76,8 @@ export default function ProfilePage() {
     PROMPT_OPTIONS[0].value
   );
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+
+  const [isMinting, setIsMinting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   fal.config({
@@ -143,6 +145,20 @@ export default function ProfilePage() {
       );
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleMint = async () => {
+    if (!generatedImage) return;
+
+    setIsMinting(true);
+    try {
+      const result = await mintNFT(generatedImage);
+      alert(result.message);
+    } catch (error) {
+      console.error("Minting error:", error);
+    } finally {
+      setIsMinting(false);
     }
   };
 
