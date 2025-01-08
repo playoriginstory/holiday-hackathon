@@ -179,12 +179,13 @@ export default function ProfilePage() {
         <h1 className="mb-6 text-2xl font-bold">Create your character</h1>
 
         {generatedImage ? (
-          <div className="flex justify-center">
+          <div className="flex flex-col justify-center">
             <img
               src={generatedImage}
               alt="Your generated character"
               className="max-h-[70vh] w-auto rounded-lg object-contain"
             />
+            <Button onClick={handleMint}>Mint now</Button>
           </div>
         ) : (
           <div className="mb-6">
