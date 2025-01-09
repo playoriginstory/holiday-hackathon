@@ -8,6 +8,8 @@ import { createUserAvatar } from "@/lib/dynamodb";
 import { Button } from "@/components/ui/button";
 import { cn, mintNFT } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 const PROMPT_OPTIONS = [
   {
@@ -170,88 +172,96 @@ export default function ProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-primary p-4">
-      <div className="w-full max-w-4xl rounded-lg bg-white p-6">
-        <h1 className="mb-6 text-2xl font-bold">Create your character</h1>
-
-        {generatedImage ? (
-          <div className="flex justify-center">
-            <img
-              src={generatedImage}
-              alt="Your generated character"
-              className="max-h-[70vh] w-auto rounded-lg object-contain"
-            />
-          </div>
-        ) : (
-          <div className="mb-6">
-            <div className="mb-4">
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Select Style
-              </label>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                {PROMPT_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setSelectedPrompt(option.value)}
-                    className={cn(
-                      "relative aspect-square overflow-hidden rounded-lg transition-all hover:opacity-90",
-                      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                      selectedPrompt === option.value
-                        ? "ring-2 ring-primary ring-offset-2"
-                        : "ring-1 ring-gray-200"
-                    )}
-                  >
-                    <img
-                      src={option.preview}
-                      alt={option.description}
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <h2 className="my-[50px] text-center text-[24px]">
-              Or create your custom character in above style
-            </h2>
-            {previewImage && (
-              <div className="mb-4">
+      <div className="w-full max-w-4xl">
+        <Card>
+          <CardHeader>
+            <CardTitle>Create your character</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {generatedImage ? (
+              <div className="flex justify-center">
                 <img
-                  src={previewImage}
-                  alt="Selected profile picture"
-                  className="mx-auto h-32 w-32 rounded-full object-cover"
+                  src={generatedImage}
+                  alt="Your generated character"
+                  className="max-h-[70vh] w-auto rounded-lg object-contain"
                 />
               </div>
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageSelect}
-              ref={fileInputRef}
-              className="hidden"
-            />
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              className="mb-10 w-full"
-            >
-              Upload Your Selfie
-            </Button>
+            ) : (
+              <div className="mb-6">
+                <div>
+                  <Label>Select Style</Label>
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                    {PROMPT_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => setSelectedPrompt(option.value)}
+                        className={cn(
+                          "relative aspect-square overflow-hidden rounded-lg transition-all hover:opacity-90",
+                          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                          selectedPrompt === option.value
+                            ? "ring-2 ring-primary ring-offset-2"
+                            : "ring-1 ring-gray-200"
+                        )}
+                      >
+                        <img
+                          src={option.preview}
+                          alt={option.description}
+                          className="h-full w-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="mt-6 flex flex-col items-center gap-2">
-              <Button
-                onClick={handleUpload}
-                disabled={(!selectedImage || isUploading) && !selectedPrompt}
-                className="w-full"
-                variant={
-                  (!selectedImage || isUploading) && !selectedPrompt
-                    ? "secondary"
-                    : "default"
-                }
-              >
-                {isUploading ? "Uploading..." : "Play"}
-              </Button>
-            </div>
-          </div>
-        )}
+                <p className="my-4 text-center">
+                  Or create your custom character in above style
+                </p>
+
+                {previewImage && (
+                  <div className="mb-4">
+                    <img
+                      src={previewImage}
+                      alt="Selected profile picture"
+                      className="mx-auto h-32 w-32 rounded-full object-cover"
+                    />
+                  </div>
+                )}
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  ref={fileInputRef}
+                  className="hidden"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mb-10 w-full"
+                >
+                  Upload Your Selfie
+                </Button>
+
+                <div className="mt-6 flex flex-col items-center gap-2">
+                  <Button
+                    onClick={handleUpload}
+                    disabled={
+                      (!selectedImage || isUploading) && !selectedPrompt
+                    }
+                    className="w-full"
+                    variant={
+                      (!selectedImage || isUploading) && !selectedPrompt
+                        ? "secondary"
+                        : "default"
+                    }
+                  >
+                    {isUploading ? "Uploading..." : "Play"}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

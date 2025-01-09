@@ -1,19 +1,11 @@
 "use client";
 
-import { ConnectKitButton } from "connectkit";
-import { useAccount, useBalance } from "wagmi";
-import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ConnectKitButton } from "connectkit";
+import Link from "next/link";
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useAccount, useBalance } from "wagmi";
 
 export default function Home() {
   const [isOpenedInsert, setIsOpenedInsert] = useState<boolean>();
@@ -40,24 +32,30 @@ export default function Home() {
         </video>
       </div>
 
-      <div className="w-full max-w-md rounded-xl bg-white p-8 backdrop-blur-sm">
+      <div className="w-full max-w-lg">
         {isOpenedInsert && balance ? (
           <Card className="flex flex-col items-center gap-6">
-            <p>Insert 1 $GRASS to play</p>
-            {/* open this code for deployment */}
-            {/* {+balance.formatted < 1 ? (
+            <CardContent className="!pt-6">
+              <p>Insert 1 $GRASS to play</p>
+              {/* open this code for deployment */}
+              {/* {+balance.formatted < 1 ? (
                             <p>Not enough $GRASS, use faucet to add: LINK</p>
-                        ) : (
-                            <Button variant="default" className="w-full">
-                                Insert
-                            </Button>
-                        )} */}
+                            ) : (
+                              <Button variant="default" className="w-full">
+                              Insert
+                              </Button>
+                              )} */}
 
-            {/* remove this code its for deployment */}
-            <Button asChild variant="default" className="w-full">
-              <Link href="/profile">Insert</Link>
-            </Button>
-            {/* ------ */}
+              {/* remove this code its for deployment */}
+              <Button
+                asChild
+                variant="default"
+                size="lg"
+                className="mt-4 w-full"
+              >
+                <Link href="/profile">Insert</Link>
+              </Button>
+            </CardContent>
           </Card>
         ) : (
           <>
@@ -73,7 +71,7 @@ export default function Home() {
               </Card>
             ) : (
               <Card className="flex flex-col items-center gap-6">
-                <CardContent className="w-full rounded-lg bg-black/20 p-4">
+                {/* <CardContent className="w-full rounded-lg bg-black/20 p-4">
                   {isBalanceLoading ? (
                     <p className="mt-2 animate-pulse text-gray-300">
                       Loading balance...
@@ -83,12 +81,13 @@ export default function Home() {
                       {balance?.formatted} {balance?.symbol}
                     </p>
                   )}
-                </CardContent>
+                </CardContent> */}
 
-                <CardContent className="flex w-full flex-col items-center justify-center gap-4">
+                <CardContent className="flex w-full flex-col items-center justify-center gap-4 !pt-6">
                   <ConnectKitButton />
                   <Button
                     variant="default"
+                    size="lg"
                     className="w-full"
                     onClick={() => setIsOpenedInsert(true)}
                   >

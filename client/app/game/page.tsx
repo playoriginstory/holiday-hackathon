@@ -1,15 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -32,6 +31,19 @@ export default function ProfilePage() {
     image: string;
   }>({ prompt: "", image: "" });
   const [userPrompt, setUserPrompt] = useState<string>("");
+  const [feedbackMessage, setFeedbackMessage] = useState<string>("");
+
+  const getFeedbackMessage = (percentage: number): string => {
+    if (percentage === 0) {
+      return "No comprendo. Try again.";
+    } else if (percentage === 50) {
+      return "Almost there never surrender.";
+    } else if (percentage === 100) {
+      return "Look at you word nerd.";
+    } else {
+      return "";
+    }
+  };
 
   const submitAnswer = async () => {
     const percentage = await calculateSemanticAccuracy(
@@ -39,6 +51,7 @@ export default function ProfilePage() {
       userPrompt
     );
     setResultPercent(percentage);
+    setFeedbackMessage(getFeedbackMessage(percentage));
     setUserPrompt("");
     setStep((prev) => prev + 1);
   };
@@ -55,83 +68,102 @@ export default function ProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-primary p-4">
-      {
+      <div className="w-full max-w-lg">
         {
-          0: (
-            <Card className="flex w-full max-w-md flex-col gap-[25px] rounded-xl bg-white p-8 backdrop-blur-sm">
-              <CardTitle className="bolder text-[24px]">
-                Game category
-              </CardTitle>
-              <Select
-                onValueChange={(value: string) => setSelectedCategory(value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose Game Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(CATEGORIES).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Button onClick={() => setStep(1)} variant="default">
-                Play
-              </Button>
-            </Card>
-          ),
-          1: (
-            <Card className="flex w-full max-w-md flex-col gap-5 rounded-xl bg-white p-8 backdrop-blur-sm">
-              <CardTitle className="bolder text-[24px]">
-                Category: {selectedCategory}
-              </CardTitle>
-              <Image
-                width={500}
-                height={500}
-                alt="category image"
-                src={selectedPrompt.image}
-              />
-              <div className="flex flex-col gap-1">
-                <Label htmlFor="message">Your prompt guess</Label>
-                <div className="grid w-full gap-1.5">
-                  <Textarea
-                    id="prompt"
-                    placeholder="Type prompt guess..."
-                    value={userPrompt}
-                    onChange={(e) => setUserPrompt(e.target.value)}
+          {
+            0: (
+              <Card className="flex w-full flex-col">
+                <CardHeader>
+                  <CardTitle className="bolder">Game category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Select
+                    onValueChange={(value: string) =>
+                      setSelectedCategory(value)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose Game Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(CATEGORIES).map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category.replace(/([A-Z])/g, " $1").trim()}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    className="mt-4 w-full"
+                    onClick={() => setStep(1)}
+                    variant="default"
+                  >
+                    Play
+                  </Button>
+                </CardContent>
+              </Card>
+            ),
+            1: (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    Category:{" "}
+                    {selectedCategory.replace(/([A-Z])/g, " $1").trim()}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Image
+                    className="rounded-lg"
+                    width={500}
+                    height={500}
+                    alt="category image"
+                    src={selectedPrompt.image}
                   />
-                </div>
-              </div>
-              <Button variant="default" onClick={submitAnswer}>
-                Submit
-              </Button>
-            </Card>
-          ),
-          2: (
-            <Card className="flex w-full max-w-md flex-col gap-[25px] rounded-xl bg-white p-8 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-center text-[32px]">
-                  Your Score
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-[80px] text-center">{resultPercent}</p>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  onClick={() => setStep(0)}
-                  variant="default"
-                  className="w-full"
-                >
-                  Play Again
-                </Button>
-              </CardFooter>
-            </Card>
-          ),
-        }[step]
-      }
+                  <div className="my-4 flex flex-col gap-1">
+                    <Label htmlFor="message">Your prompt guess</Label>
+
+                    <Textarea
+                      id="prompt"
+                      placeholder="Type prompt guess..."
+                      value={userPrompt}
+                      onChange={(e) => setUserPrompt(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    className="w-full"
+                    variant="default"
+                    onClick={submitAnswer}
+                  >
+                    Submit
+                  </Button>
+                </CardContent>
+              </Card>
+            ),
+            2: (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-center text-5xl">
+                    Your Score
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <h1 className="text-center text-6xl">{resultPercent}%</h1>
+                  <p className="mt-4 text-center">{feedbackMessage}</p>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    onClick={() => setStep(0)}
+                    variant="default"
+                    className="w-full"
+                  >
+                    Play Again
+                  </Button>
+                </CardFooter>
+              </Card>
+            ),
+          }[step]
+        }
+      </div>
     </div>
   );
 }
