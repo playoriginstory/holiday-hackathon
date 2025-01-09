@@ -3,6 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -18,19 +26,25 @@ import { useEffect, useState } from "react";
 export default function ProfilePage() {
   const [step, setStep] = useState<number>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [resultPercent, setResultPercent] = useState<number>(0);
   const [selectedPrompt, setSelectedPrompt] = useState<{
     prompt: string;
     image: string;
   }>({ prompt: "", image: "" });
   const [userPrompt, setUserPrompt] = useState<string>("");
 
-  const submitAnswer = () => {
-    calculateSemanticAccuracy(selectedPrompt.prompt, userPrompt);
+  const submitAnswer = async () => {
+    const percentage = await calculateSemanticAccuracy(
+      selectedPrompt.prompt,
+      userPrompt
+    );
+    setResultPercent(percentage);
+    setUserPrompt("");
+    setStep((prev) => prev + 1);
   };
 
   useEffect(() => {
     if (selectedCategory) {
-      // @ts-ignore
       const randomPrompt =
         CATEGORIES[selectedCategory][
           Math.floor(Math.random() * CATEGORIES[selectedCategory].length)
@@ -44,8 +58,10 @@ export default function ProfilePage() {
       {
         {
           0: (
-            <div className="flex w-full max-w-md flex-col gap-[25px] rounded-xl bg-white p-8 backdrop-blur-sm">
-              <h1 className="bolder text-[24px]">Game category</h1>
+            <Card className="flex w-full max-w-md flex-col gap-[25px] rounded-xl bg-white p-8 backdrop-blur-sm">
+              <CardTitle className="bolder text-[24px]">
+                Game category
+              </CardTitle>
               <Select
                 onValueChange={(value: string) => setSelectedCategory(value)}
               >
@@ -64,14 +80,13 @@ export default function ProfilePage() {
               <Button onClick={() => setStep(1)} variant="default">
                 Play
               </Button>
-            </div>
+            </Card>
           ),
           1: (
-            <div className="flex w-full max-w-md flex-col gap-5 rounded-xl bg-white p-8 backdrop-blur-sm">
-              <h1 className="bolder text-[24px]">
+            <Card className="flex w-full max-w-md flex-col gap-5 rounded-xl bg-white p-8 backdrop-blur-sm">
+              <CardTitle className="bolder text-[24px]">
                 Category: {selectedCategory}
-              </h1>
-              {/* @ts-ignore */}
+              </CardTitle>
               <Image
                 width={500}
                 height={500}
@@ -92,7 +107,28 @@ export default function ProfilePage() {
               <Button variant="default" onClick={submitAnswer}>
                 Submit
               </Button>
-            </div>
+            </Card>
+          ),
+          2: (
+            <Card className="flex w-full max-w-md flex-col gap-[25px] rounded-xl bg-white p-8 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-center text-[32px]">
+                  Your Score
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-[80px] text-center">{resultPercent}</p>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  onClick={() => setStep(0)}
+                  variant="default"
+                  className="w-full"
+                >
+                  Play Again
+                </Button>
+              </CardFooter>
+            </Card>
           ),
         }[step]
       }

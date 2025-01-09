@@ -19,26 +19,36 @@ export const calculateSemanticAccuracy = async (
   correctPrompt: string,
   userPrompt: string
 ): Promise<number> => {
-  const apiUrl = 'https://api.openai.com/v1/completions';
+  const apiUrl = 'https://api.openai.com/v1/embeddings';
 
   try {
     const response = await axios.post(
-      apiUrl,
-      {
-        model: 'text-davinci-003',
-        prompt: `Compare the following sentences for semantic similarity:\n1. ${correctPrompt}\n2. ${userPrompt}\nProvide a similarity score between 0 and 1.`,
-        max_tokens: 10,
-        temperature: 0,
-      },
-      {
-        headers: {
-          // remove API_KEY default string for deployment 
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY || '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'}`,
-        },
-      }
+        apiUrl,
+        {
+            model: 'text-embedding-ada-002', // Model for generating embeddings
+            input: [
+              correctPrompt, // First text to embed
+              userPrompt,    // Second text to embed
+            ],
+          },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY || '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'}`,
+          },
+        }
     );
+    const [correctPromptEmbedding, userPromptEmbedding] = response.data.data;
+    const correctPromptVector = correctPromptEmbedding.embedding;
+    const userPromptVector = userPromptEmbedding.embedding;
 
-    const similarityScore = parseFloat(response.data.choices[0].text.trim());
+    const cosineSimilarity = function(a:any, b:any) {
+        const dotProduct = a.reduce((sum:number, value:number, index:number) => sum + value * b[index], 0);
+        const magnitudeA = Math.sqrt(a.reduce((sum:number, value:number) => sum + value * value, 0));
+        const magnitudeB = Math.sqrt(b.reduce((sum:number, value:number) => sum + value * value, 0));
+        return dotProduct / (magnitudeA * magnitudeB);
+    };
+
+    const similarityScore = cosineSimilarity(correctPromptVector, userPromptVector);
     return Math.round(similarityScore * 100); // Convert to percentage
   } catch (error) {
     console.error('Error in semantic scoring:', error);
