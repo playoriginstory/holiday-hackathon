@@ -29,7 +29,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Web3Provider>{children}</Web3Provider>
+        <div className="flex min-h-screen flex-col items-center justify-center bg-primary p-4">
+          <div className="w-90 mb-8">
+            {/* <Image src="/logo.jpg" alt="Prompt Destroyers Logo" width={500} height={500} className="rounded-lg shadow-lg" priority /> */}
+            <video className="rounded-lg shadow-lg" width="500" autoPlay loop>
+              <source
+                src="/assets/videos/initialCardVideo.mp4"
+                type="video/mp4"
+              />
+              Your browser doesn't support this video
+            </video>
+          </div>
+          <Web3Provider>{children}</Web3Provider>
+        </div>
       </body>
     </html>
   );
