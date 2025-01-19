@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Web3Provider } from "@/providers/Web3Provider";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import WalletContextProvider from "@/providers/WalletContextProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,7 +42,8 @@ export default function RootLayout({
               Your browser doesn't support this video
             </video>
           </div>
-          <Web3Provider>{children}</Web3Provider>
+          <WalletContextProvider>
+          <Web3Provider>{children}</Web3Provider></WalletContextProvider>
         </div>
       </body>
     </html>
