@@ -4,28 +4,43 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SimpleNFT is ERC721, Ownable {
-    uint256 public currentTokenId;
+contract ImageNFT is ERC721, Ownable {
 
-    mapping(uint256 => string) private _tokenURIs;
+    mapping(uint256 => string) private _tokenImageURLs;
 
-    constructor() ERC721("SimpleNFT", "SNFT") {}
+    mapping(uint256 => bool) private _mintedTokens;
 
+    uint256 private _nextTokenId;
 
-    function mintNFT(address to, string memory tokenURI) public onlyOwner {
-        uint256 tokenId = ++currentTokenId;
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, tokenURI);
+    constructor() ERC721("ImageNFT", "IMG") {
+        _nextTokenId = 1; 
     }
 
-  
-    function _setTokenURI(uint256 tokenId, string memory tokenURI) internal {
-        _tokenURIs[tokenId] = tokenURI;
+    function mintNFT(string memory imageUrl) public {
+        uint256 tokenId = _nextTokenId; 
+        _nextTokenId++; 
+
+
+        require(!_mintedTokens[tokenId], "Token ID already minted");
+
+     
+        _mintedTokens[tokenId] = true;
+
+    
+        _safeMint(msg.sender, tokenId);
+
+      
+        _tokenImageURLs[tokenId] = imageUrl;
     }
 
-  
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        return _tokenURIs[tokenId];
+ 
+    function tokenImageURL(uint256 tokenId) public view returns (string memory) {
+     
+        require(_mintedTokens[tokenId], "Token ID does not exist");
+        return _tokenImageURLs[tokenId];
+    }
+
+    function getCurrentTokenId() public view returns (uint256) {
+        return _nextTokenId;
     }
 }
