@@ -33,7 +33,6 @@ export const createUserAvatar = async (userId: string, avatarUrl: string) => {
 };
 
 export const getUserAvatar = async (userId: string) => {
-  console.log("USERID", userId);
   const { Item } = await client.send(
     new GetItemCommand({
       TableName: process.env.DYNAMODB_USER_AVATARS_TABLE_NAME!,

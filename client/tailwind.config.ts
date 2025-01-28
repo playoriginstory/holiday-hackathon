@@ -56,10 +56,6 @@ const config: Config = {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
-			fontFamily: {
-				jersey: ['Jersey 15', 'sans-serif'],
-				Rampart: ["Rampart One", "cursive"],
-			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
       {isConnected && (
         <div className="flex items-center gap-2">
           {/* <ConnectKitButton/> */}
-          <Button className="font-jersey bg-[#262629] hover:bg-[#262629]" onClick={() => disconnect()}>
+          <Button className="bg-[#262629] hover:bg-[#262629]" onClick={() => disconnect()}>
             Disconnect {address?.slice(0, 6)}...{address?.slice(-5)}
           </Button>
           <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
