@@ -7,7 +7,6 @@ import { fal } from "@fal-ai/client";
 import { createUserAvatar, getUserAvatar } from "@/lib/dynamodb";
 import { Button } from "@/components/ui/button";
 import { cn, mintNFT } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import GamePage from "./game";

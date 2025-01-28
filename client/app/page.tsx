@@ -12,20 +12,16 @@ import {
 import WalletConnection from "@/components/WalletConnection";
 import { getUserAvatar } from "@/lib/dynamodb";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { ConnectKitButton } from "connectkit";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { parseEther } from "viem";
 import { useAccount, useBalance, useSendTransaction } from "wagmi";
 import {
-  Connection,
-  Keypair,
   PublicKey,
   SystemProgram,
   LAMPORTS_PER_SOL,
   Transaction,
-  sendAndConfirmTransaction,
 } from "@solana/web3.js";
 
 export default function Home() {
@@ -44,8 +40,6 @@ export default function Home() {
   const { publicKey, connected } = wallet;
   const { connection } = useConnection();
 
-  console.log({ wallet });
-
   useEffect(() => {
     if (selectedChain === "lens" && isConnected) {
       const getAvatar = async () => {
@@ -58,28 +52,37 @@ export default function Home() {
   }, [isConnected, address, selectedChain]);
 
   const handleLensInsert = () => {
-    sendTransaction(
-      {
-        to: "0xE609B58cBA66403576458a32e754B49AF17b04F1",
-        value: parseEther("0.01"),
+    interface TransactionConfig {
+      to: string;
+      value: ReturnType<typeof parseEther>;
+    }
+
+    interface TransactionCallbacks {
+      onSuccess: (hash: string) => Promise<void>;
+      onError: (error: Error) => void;
+    }
+
+    const transactionConfig: TransactionConfig = {
+      to: process.env.NEXT_PUBLIC_LENS_RECEIVER_ADDRESS as string,
+      value: parseEther("0.01"),
+    };
+
+    const transactionCallbacks: TransactionCallbacks = {
+      onSuccess: async (hash: string) => {
+        setIsTxSuccess(true);
       },
-      {
-        onSuccess: async (hash) => {
-          console.log("Lens TX HASH", hash);
-          setIsTxSuccess(true);
-        },
-        onError: (error) => {
-          console.error("Lens TX ERROR", error);
-        },
-      }
-    );
+      onError: (error: Error) => {
+        console.error("Lens TX ERROR", error);
+      },
+    };
+
+    sendTransaction(transactionConfig, transactionCallbacks);
   };
 
   const handleSolanaInsert = async () => {
     try {
       if (!connection || !publicKey || !connected) {
         setIsTxSuccess(false);
-        console.log("Wallet not connected.");
         return;
       }
 
@@ -89,11 +92,9 @@ export default function Home() {
         return;
       }
 
-      console.log(`Sender's balance: ${senderBalance / LAMPORTS_PER_SOL} SOL`);
-
       const lamportsToSend = 1 * LAMPORTS_PER_SOL;
       const recipientPubKey = new PublicKey(
-        "Zv3bxDmkXBk4NUZCsrtcbs27HUm4ZASqRWbBuX6KPiy"
+        process.env.NEXT_PUBLIC_SOLANA_RECEIVER_ADDRESS as string
       );
 
       const transferTransaction = new Transaction().add(
@@ -112,8 +113,6 @@ export default function Home() {
         }
       );
 
-      console.log("Transaction sent with signature:", transactionSignature);
-
       const confirmation = await connection.confirmTransaction(
         transactionSignature,
         "processed"
@@ -122,11 +121,6 @@ export default function Home() {
         console.error("Transaction failed", confirmation.value.err);
         return;
       }
-
-      console.log(
-        "Transaction confirmed with signature:",
-        transactionSignature
-      );
 
       setIsTxSuccess(true);
     } catch (error) {
@@ -249,6 +243,7 @@ export default function Home() {
 
   return null;
 }
+
 
 // return (
 //   <div className="flex min-h-screen flex-col items-center justify-center bg-primary p-4">
