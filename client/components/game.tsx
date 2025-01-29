@@ -73,7 +73,9 @@ export default function GamePage() {
           0: (
             <Card className="w-full max-w-lg">
               <CardHeader>
-                <CardTitle className="bolder">Game category</CardTitle>
+                <CardTitle className="!text-2xl font-normal">
+                  Game category
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Select
@@ -103,7 +105,7 @@ export default function GamePage() {
           1: (
             <Card className="w-full max-w-lg">
               <CardHeader>
-                <CardTitle>
+                <CardTitle className="!text-2xl font-normal">
                   Category: {selectedCategory.replace(/([A-Z])/g, " $1").trim()}
                 </CardTitle>
               </CardHeader>
@@ -139,7 +141,7 @@ export default function GamePage() {
           2: (
             <Card className="w-full max-w-lg">
               <CardHeader>
-                <CardTitle className="text-center text-5xl">
+                <CardTitle className="text-center text-5xl font-normal">
                   Your Score
                 </CardTitle>
               </CardHeader>

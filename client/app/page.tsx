@@ -68,7 +68,9 @@ export default function Home() {
       <>
         <Card className="w-full max-w-lg">
           <CardHeader className="text-center">
-            <CardTitle>Welcome to Prompt Destroyers</CardTitle>
+            <CardTitle className="!text-4xl font-normal">
+              Welcome to Prompt Destroyers
+            </CardTitle>
             <CardDescription>Connect your wallet to begin</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -82,9 +84,6 @@ export default function Home() {
   if (isConnected && balance) {
     return !isTxSuccess ? (
       <Card className="w-full max-w-lg text-center">
-        <CardHeader>
-          <CardTitle>Welcome to Prompt Destroyers</CardTitle>
-        </CardHeader>
         <CardContent className="!pt-6">
           <p>Insert $GRASS to play</p>
 
