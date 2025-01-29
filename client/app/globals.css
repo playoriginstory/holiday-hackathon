@@ -10,7 +10,19 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .font-geist-sans {
+    font-family: var(--font-geist-sans), sans-serif;
+  }
+  .font-geist-mono {
+    font-family: var(--font-geist-mono), monospace;
+  }
+  .font-jersey-15 {
+    font-family: var(--font-jersey-15), sans-serif;
+  }
 }
+
+
+
 
 @layer base {
   :root {
